@@ -17,7 +17,7 @@ fs.readdir(config.path, 'utf-8', (err, data) => {
 
             if (stats.isFile()) {
                 let regex = new RegExp(`\.${config.files}$`);
-                
+
                 if (regex.test(file)) {
                     fs.unlink(pathfile, (err) => {
                         if (err) {

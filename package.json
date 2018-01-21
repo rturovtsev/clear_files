@@ -1,0 +1,27 @@
+{
+  "name": "clear_files",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sugrob69/clear_files.git"
+  },
+  "keywords": [
+    "clear"
+  ],
+  "author": "sugrob69",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sugrob69/clear_files/issues"
+  },
+  "homepage": "https://github.com/sugrob69/clear_files#readme",
+  "directories": {
+    "doc": ".",
+    "test": "test",
+    "example": "example"
+  }
+}
