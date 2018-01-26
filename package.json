@@ -24,7 +24,5 @@
     "test": "test",
     "example": "example"
   },
-  "dependencies": {
-    "async": "^2.6.0"
-  }
+  "dependencies": {}
 }
