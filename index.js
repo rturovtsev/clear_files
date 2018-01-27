@@ -8,7 +8,7 @@ async function makeCleaner() {
     return await loopFile(files);
 }
 
-makeCleaner().catch(err => console.log(err)).then(resp => console.log(`Removed file: ${resp}`));
+makeCleaner().catch(err => console.log(err)).then(resp => console.log(`Removed ${resp} files`));
 
 function readData() {
     return new Promise((resolve, reject) => {
@@ -20,24 +20,38 @@ function readData() {
 }
 
 function loopFile(arr = []) {
+    let countFiles = 0;
+    let iteration = 0;
+
     return new Promise((resolve, reject) => {
-        arr.forEach((file) => {
-            let pathfile = path + file;
+        if (arr.length > 0) {
+            arr.forEach((file) => {
+                let pathfile = path + file;
 
-            fs.stat(pathfile, (err, stats) => {
-                if (err) reject(new Error(err.message));
+                fs.stat(pathfile, (err, stats) => {
 
-                if (stats.isFile()) {
-                    let regex = new RegExp(`\.${fileExt}$`);
+                    if (err) reject(new Error(err.message));
+                    
+                    iteration++;
 
-                    if (regex.test(file)) {
-                        fs.unlink(pathfile, (err) => {
-                            if (err) reject(new Error(err.message));
-                            resolve(pathfile);
-                        })
+                    if (stats.isFile()) {
+                        let regex = new RegExp(`\.${fileExt}$`);
+
+                        if (regex.test(file)) {
+                            fs.unlink(pathfile, (err) => {
+                                if (err) reject(new Error(err.message));
+                                countFiles++;
+                            })
+                        }
                     }
-                }
+
+                    if (iteration === arr.length) {
+                        resolve(countFiles);
+                    }
+                });
             });
-        });
+        } else {
+            resolve(countFiles);
+        }
     });
 }
