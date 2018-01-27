@@ -5,10 +5,10 @@ const fileExt = config.files;
 
 async function makeCleaner() {
     const files = await readData();
-    await loopFile(files);
+    return await loopFile(files);
 }
 
-makeCleaner().catch(console.error).then(console.log("Done"));
+makeCleaner().catch(err => console.log(err)).then(resp => console.log(`Removed file: ${resp}`));
 
 function readData() {
     return new Promise((resolve, reject) => {
@@ -24,7 +24,7 @@ function loopFile(arr = []) {
         arr.forEach((file) => {
             let pathfile = path + file;
 
-            fs.stat(pathfile, function (err, stats) {
+            fs.stat(pathfile, (err, stats) => {
                 if (err) reject(new Error(err.message));
 
                 if (stats.isFile()) {
@@ -33,7 +33,7 @@ function loopFile(arr = []) {
                     if (regex.test(file)) {
                         fs.unlink(pathfile, (err) => {
                             if (err) reject(new Error(err.message));
-                            console.log(`Remove ${pathfile}`);
+                            resolve(pathfile);
                         })
                     }
                 }
