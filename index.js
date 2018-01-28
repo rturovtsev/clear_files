@@ -2,10 +2,12 @@ const fs = require('fs');
 const config = require('./config');
 const path = config.path;
 const fileExt = config.files;
+let files = [];
 
 async function makeCleaner() {
     const files = await readData();
-    return await loopFile(files);
+    await loopFile(files);
+    return result();
 }
 
 makeCleaner().catch(err => console.log(err)).then(resp => console.log(`Removed ${resp} files`));
@@ -20,7 +22,6 @@ function readData() {
 }
 
 function loopFile(arr = []) {
-    let countFiles = 0;
     let iteration = 0;
 
     return new Promise((resolve, reject) => {
@@ -29,29 +30,54 @@ function loopFile(arr = []) {
                 let pathfile = path + file;
 
                 fs.stat(pathfile, (err, stats) => {
+                    iteration++;
 
                     if (err) reject(new Error(err.message));
-                    
-                    iteration++;
 
                     if (stats.isFile()) {
                         let regex = new RegExp(`\.${fileExt}$`);
 
                         if (regex.test(file)) {
-                            fs.unlink(pathfile, (err) => {
-                                if (err) reject(new Error(err.message));
-                                countFiles++;
-                            })
-                        }
-                    }
+                            files.push(file);
 
-                    if (iteration === arr.length) {
-                        resolve(countFiles);
+                            if (iteration === arr.length) {
+                                resolve();
+                            }
+                        }
+                    } else {
+                        if (iteration === arr.length) {
+                            resolve();
+                        }
                     }
                 });
             });
         } else {
-            resolve(countFiles);
+            resolve();
+        }
+    });
+}
+
+function result() {
+    return new Promise((resolve, reject) => {
+        if (files.length > 0) {
+            let iteration = 0;
+
+            console.log(files.length + " file(s) will be deleted.");
+
+            files.forEach(file => {
+                let pathfile = path + file;
+
+                fs.unlink(pathfile, (err) => {
+                    if (err) reject(new Error(err.message));
+                    iteration++;
+
+                    if (iteration === files.length) {
+                        resolve(files.length);
+                    }
+                })
+            });
+        } else {
+            resolve(0);
         }
     });
 }
